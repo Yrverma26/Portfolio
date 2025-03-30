@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Portfolio with Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-theme {
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+    max-width: 3000px; 
+    margin: auto;
+}
+
+.image-container {
+    flex-shrink: 0; 
+}
+
+.image-container img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #333;
+    margin-left: 10px;
+}
+
+.header h1, 
+.header p, 
+.header button {
+    margin-right: 10px;
+}
+
+.header button {
+    margin-top: 10px;
+}
+
+/* To align text content to the right */
+.header div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+
+        .portfolio-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .image-container img {
+    width: 120px;  /* Adjust size as needed */
+    height: 120px;
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Ensures the image fills the circular frame */
+    border: 3px solid #333; /* Optional: Adds a border */
+}
+
+
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .header p { font-size: 1.2rem; }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #6e8efb;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .nav a { color: #a777e3; }
+        .nav a:hover { background: #6e8efb; color: white; border-radius: 5px; }
+        .dark-theme .nav a:hover { background: #a777e3; }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .section { background: #2a2a2a; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .section h2 { color: #6e8efb; margin-bottom: 20px; }
+        .dark-theme .section h2 { color: #a777e3; }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dark-theme .project-card { background: #333; }
+        .project-card:hover { transform: translateY(-10px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .dark-theme .project-card:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.7); }
+
+        .project-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover .project-image { transform: scale(1.05); }
+        .project-card h3 { color: #6e8efb; margin-bottom: 10px; }
+        .dark-theme .project-card h3 { color: #a777e3; }
+        .project-card p { font-size: 0.9rem; color: #666; }
+        .dark-theme .project-card p { color: #b0b0b0; }
+
+        .chat-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #6e8efb;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dark-theme .chat-bubble { background: #a777e3; }
+        .chat-bubble:hover { transform: scale(1.05); background: #a777e3; }
+        .dark-theme .chat-bubble:hover { background: #6e8efb; }
+
+        .chat-overlay {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            overflow: hidden;
+            z-index: 1001;
+            animation: slideIn 0.3s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .chat-overlay { background: #2a2a2a; }
+
+        @keyframes slideIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        .chat-header h3 { font-size: 1.2rem; flex-grow: 1; }
+        .close-chat { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
+        .chat-messages {
+            height: calc(100% - 110px);
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .user-message {
+            background: #6e8efb;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .dark-theme .user-message { background: #a777e3; }
+        .ai-message { background: #f0f2f5; color: #333; align-self: flex-start; }
+        .dark-theme .ai-message { background: #333; color: #e0e0e0; }
+
+        .chat-input {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .chat-input { background: #2a2a2a; border-top: 1px solid #444; }
+        .chat-input input { flex: 1; padding: 8px 15px; border: 1px solid #ddd; border-radius: 20px; outline: none; transition: all 0.3s ease; }
+        .dark-theme .chat-input input { background: #333; border: 1px solid #555; color: #e0e0e0; }
+        .chat-input button { background: #6e8efb; color: white; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; }
+        .dark-theme .chat-input button { background: #a777e3; }
+        .chat-input button:hover { background: #a777e3; }
+        .dark-theme .chat-input button:hover { background: #6e8efb; }
+
+        @media (max-width: 768px) {
+            .profile-pic { width: 120px; height: 120px; }
+            .chat-overlay { width: 300px; height: 400px; }
+            .project-image { height: 120px; }
+        }
+
+        @media (max-width: 480px) {
+            .profile-pic { width: 100px; height: 100px; }
+            .chat-overlay { width: 90%; right: 5%; bottom: 60px; }
+            .project-image { height: 100px; }
+        }
+        .social-links {
+    margin-top: 10px;
+}
+
+.social-links a {
+    font-size: 24px; 
+    color: #333; 
+    margin-right: 10px; 
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+    color: #0077b5; /* LinkedIn color for hover */
+}
+
+.social-links a:nth-child(1):hover {
+    color: #000; /* GitHub color for hover */
+}
+
+    </style>
+</head>
+<body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <div class="portfolio-container">
+        <header class="header">
+            <div class="image-container">
+                <img src="https://i.ibb.co/xqMPd29C/4020a17a-158c-4bfa-8e41-73aa4039c4e2.jpg" alt="Profile Image">
+            </div>
+            <div>
+                <h1>Yashraj Verma</h1>
+                <p>Architecture Student | UI/UX Designer</p>
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            </div>
+        </header>    
+    </div>
+    
+
+        <nav class="nav">
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#skills">Skills</a>
+            <a href="#contact">Contact</a>
+        </nav>
+
+        <section id="about" class="section">
+            <h2>About Me</h2>
+            <p id="myDescription">I'm Yashraj Verma, a 3rd-year architecture student at MNIT Jaipur with a passion for design and creativity. 
+                I enjoy graphic designing and content writing, which complement my architectural studies. As a basketball enthusiast,
+                 I value teamwork and discipline. Always eager to learn, I have a growing interest in AI and coding, exploring how technology intersects with design.
+                  With a curious mindset and a drive for continuous growth, I strive to expand my skills and knowledge in both architecture and the digital world.  
+
+                Let me know if you'd like any tweaks!.</p>
+        </section>
+
+        <section id="projects" class="section">
+            <h2>Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085" alt="E-commerce" class="project-image">
+                    <h3>E-commerce Platform</h3>
+                    <p>A fully responsive online store with payment integration , this is only for web page not any real project</p>
+                </div>
+                <div class="project-card">
+                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3" alt="Dashboard" class="project-image">
+                    <h3>Social Dashboard</h3>
+                    <p>Real-time analytics dashboard for social media ,  this is only for web page not any real project</p>
+                </div>
+                <div class="project-card">
+                    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40" alt="Portfolio" class="project-image">
+                    <h3>Portfolio Manager</h3>
+                    <p>Tool to track and manage investment portfolios ,  this is only for web page not any real project</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="section">
+            <h2>Skills</h2>
+            <p>Basic Coding - HTML, CSS, JavaScript</p>
+            <p>Graphic Design - Canva , Photoshop
+            </p>
+            <p>Architecture Skills - AutoCad , Sketchup Modeling</p>
+        </section>
+
+        <section id="Contact" class="section">
+            <h2>Contact</h2>
+            <p>Email - yrverma200@gmail.com
+            </p>
+            <p>Contact no. 6263154358</p>
+            <div class="social-links">
+                <a href="https://github.com/https://Yrverma26" target="_blank">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/your-linkedin-username/" target="_blank">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </div>
+        </section>
+        
+    </div>
+   
+
+    <div class="chat-bubble" onclick="toggleChat()">Ask anything about me</div>
+
+    <div class="chat-overlay" id="chatOverlay">
+        <div class="chat-header">
+            <img src="https://i.ibb.co/xqMPd29C/4020a17a-158c-4bfa-8e41-73aa4039c4e2.jpg" alt="Chat Profile" class="chat-profile-pic">
+            <h3>Chat with Me</h3>
+            <button class="close-chat" onclick="toggleChat()">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+<script type="module>
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyBznWonJn39MAmzM0lxw7JK4m1y34I_WXA",
+      authDomain: "portfolio-bac50.firebaseapp.com",
+      projectId: "portfolio-bac50",
+      storageBucket: "portfolio-bac50.firebasestorage.app",
+      messagingSenderId: "903357121806",
+      appId: "1:903357121806:web:3a52716630981ca6c9435f",
+      measurementId: "G-W3RV1TK4WY"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+          // Constants
+          const myFullName = "Yashraj Verma";
+          const myDescription = document.getElementById('myDescription').textContent;
+          const GEMINI_API_KEY = "AIzaSyDkaif-6-AAM5Onos_JqOXYOdmB0hMLRf4"; // Replace with your actual Gemini API key
+  
+          // Smooth scrolling
+          document.querySelectorAll('.nav a').forEach(anchor => {
+              anchor.addEventListener('click', function(e) {
+                  e.preventDefault();
+                  document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+              });
+          });
+  
+</script>
+    <script>
+        
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const button = document.querySelector('.theme-toggle');
+            button.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+            localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            document.querySelector('.theme-toggle').textContent = '☀️';
+        }
+
+        // Chat functionality
+        const chatOverlay = document.getElementById('chatOverlay');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        let isFirstOpen = true;
+
+        function toggleChat() {
+            const isOpening = chatOverlay.style.display !== 'block';
+            chatOverlay.style.display = isOpening ? 'block' : 'none';
+            
+            if (isOpening && isFirstOpen) {
+                const initialMsg = document.createElement('div');
+                initialMsg.className = 'message ai-message';
+                initialMsg.textContent = `Hi, I am ${myFullName}. What do you want to know about me?`;
+                chatMessages.appendChild(initialMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                isFirstOpen = true;
+            }
+        }
+
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user-message';
+            userMsg.textContent = message;
+            chatMessages.appendChild(userMsg);
+
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulate API call
+            const aiResponse = await getGeminiResponse(message);
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'message ai-message';
+            aiMsg.textContent = aiResponse;
+            chatMessages.appendChild(aiMsg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function getGeminiResponse(message) {
+            // Mock response
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(`Hey there! I’m Yashraj Verma. Regarding "${message}", I’d say: ${mockResponse(message)}. What else can I help you with?`);
+                }, 1000);
+            });
+
+            // API 
+            
+            try {
+                const apiKey = "AIzaSyDkaif-6-AAM5Onos_JqOXYOdmB0hMLRf4"
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: `User_message:${messageText}. Reply naturally to the usermessage and if required then answer based on: ${myDescription} or just simply give friendly reply. and reply in a way that Yashraj Verma is himself talking. reply in short sentences`
+                                }]
+                            }]
+                        })
+                    }
+                );
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text; // Adjust based on actual API response structure
+            } catch (error) {
+                console.error('Error fetching Gemini API:', error);
+                return "Oops! Something went wrong. Let’s try that again.";
+            }
+            
+        }
+
+        function mockResponse(message) {
+            // Simple mock responses based on message content
+            if (message.toLowerCase().includes('project')) {
+                return "I’ve worked on some cool projects like an e-commerce platform and a social dashboard. Which one interests you?";
+            } else if (message.toLowerCase().includes('skill')) {
+                return "I’m skilled in HTML, CSS, JavaScript, and more. Want to know about any specific one?";
+            }else if (message.toLowerCase().includes('collage')) {
+                return "I’m in MNIT JAIPUR , Currently Persuring Architecture and Planning. Want to know about any specific one?";
+            }else if (message.toLowerCase().includes('hobbies')) {
+                return "a basketball enthusiast, Graphic Design And Content Writing. Want to know about any specific one?";
+            }else if (message.toLowerCase().includes('name')) {
+                return "My Name Is Yashraj Verma. Want to know about any specific one?";
+            }
+            else if (message.toLowerCase().includes('hi , hello , good moarning')) {
+                return "Hello Sir,I'm Yashraj Verma. Want to know about any specific one?";
+            }
+             else {
+                return "Sorry For Inconvenience, I'm Not Able To Answer Your This Question .  Want to know about any specific one ";
+            }
+        }
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
